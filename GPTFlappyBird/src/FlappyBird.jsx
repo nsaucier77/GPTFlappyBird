@@ -58,6 +58,7 @@ export default function FlappyBird() {
   }
 
   function flap() {
+
     if (!gameStartedRef.current) {
       gameStartedRef.current = true;
       pausedRef.current = false;
@@ -66,16 +67,18 @@ export default function FlappyBird() {
     if (gameOverRef.current) return; // ignore flaps on game over
     birdVYRef.current = cfg.current.jump;
   }
+  // Handle taps/clicks anywhere in the wrapper/overlay
+  const handlePointer = () => {
+    flap();
+    if (!rafRef.current && !pausedRef.current) {
+      rafRef.current = requestAnimationFrame(loop);
+    }
+  };
+
+
 
   function togglePause() {
 
-    // Handle taps/clicks anywhere in the wrapper/overlay
-    const handlePointer = () => {
-      flap();
-      if (!rafRef.current && !pausedRef.current) {
-        rafRef.current = requestAnimationFrame(loop);
-      }
-    };
     if (!gameStartedRef.current || gameOverRef.current) return;
     pausedRef.current = !pausedRef.current;
     if (!pausedRef.current) {
