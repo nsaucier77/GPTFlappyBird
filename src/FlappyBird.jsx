@@ -68,6 +68,14 @@ export default function FlappyBird() {
   }
 
   function togglePause() {
+
+    // Handle taps/clicks anywhere in the wrapper/overlay
+    const handlePointer = () => {
+      flap();
+      if (!rafRef.current && !pausedRef.current) {
+        rafRef.current = requestAnimationFrame(loop);
+      }
+    };
     if (!gameStartedRef.current || gameOverRef.current) return;
     pausedRef.current = !pausedRef.current;
     if (!pausedRef.current) {
@@ -306,14 +314,7 @@ export default function FlappyBird() {
       }
     };
 
-    const onPointer = () => {
-      flap();
-      if (!rafRef.current && !pausedRef.current) rafRef.current = requestAnimationFrame(loop);
-    };
-
-    const c = canvasRef.current;
     window.addEventListener("keydown", onKey);
-    c?.addEventListener("pointerdown", onPointer);
 
     resetGame();
     // Draw first frame
@@ -321,7 +322,6 @@ export default function FlappyBird() {
 
     return () => {
       window.removeEventListener("keydown", onKey);
-      c?.removeEventListener("pointerdown", onPointer);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -344,7 +344,7 @@ export default function FlappyBird() {
   };
 
   return (
-    <div style={{position:'relative'}}>
+    <div style={{position:'relative'}} onPointerDown={handlePointer}>
       {/* Canvas container */}
       <canvas
         ref={canvasRef}
@@ -352,7 +352,8 @@ export default function FlappyBird() {
           borderRadius: 16,
           boxShadow: "0 10px 25px rgba(0,0,0,0.12)",
           outline: "1px solid rgba(0,0,0,0.08)",
-          background: "white"
+          background: "white",
+          touchAction: "none"
         }}
         aria-label="Flappy Bird Canvas"
       />
@@ -368,7 +369,7 @@ export default function FlappyBird() {
 
       {/* Help overlay */}
       {showHelp && (
-        <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', textAlign:'center', padding:24}}>
+        <div onPointerDown={handlePointer} style={{position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', textAlign:'center', padding:24}}>
           <div style={{background:'rgba(255,255,255,0.85)', backdropFilter:'blur(4px)', borderRadius:16, boxShadow:'0 10px 25px rgba(0,0,0,0.12)', padding:16, maxWidth:'85%'}}>
             <h1 style={{fontSize:18, fontWeight:800, margin:'0 0 6px'}}>Flappy Bird</h1>
             <p style={{fontSize:13, color:'#334155', margin:0}}>

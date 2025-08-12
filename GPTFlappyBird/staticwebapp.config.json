@@ -1,9 +1,16 @@
 {
   "navigationFallback": {
+
     "rewrite": "/index.html",
     "exclude": [
       "/assets/*",
       "/*.{js,css,map,png,jpg,jpeg,gif,svg,ico,txt,webp,woff,woff2,ttf,eot}"
     ]
+
+  },
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/index.html"
+    }
   }
 }
